@@ -1,0 +1,33 @@
+apiVersion: v2
+name: infra-scans
+description: "Umbrella chart for monthly security scans"
+version: 1.0.0
+dependencies:
+  - name: kube-bench
+    version: "0.6.5"
+    repository: "https://aquasecurity.github.io/helm-charts/"
+    condition: kube-bench.enabled
+  - name: falco
+    version: "1.14.0"
+    repository: "https://falcosecurity.github.io/charts/"
+    condition: falco.enabled
+  - name: anchore-engine
+    version: "0.8.2"
+    repository: "https://charts.anchore.io"
+    condition: anchore.enabled
+  - name: nessus
+    version: "1.0.0"
+    repository: "https://artifacthub.io/packages/helm/tenable/nessus"
+    condition: nessus.enabled
+  - name: mde-linux
+    version: "1.0.0"
+    repository: "https://github.com/microsoft/helm-charts/tree/master/charts/mde-linux"
+    condition: mde-linux.enabled
+  - name: invicti
+    version: "1.0.0"
+    repository: "./charts/invicti"
+    condition: invicti.enabled
+  - name: pentest-scripts
+    version: "1.0.0"
+    repository: "./charts/pentest-scripts"
+    condition: pentest-scripts.enabled
