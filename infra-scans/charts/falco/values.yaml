@@ -1,0 +1,5 @@
+enabled: true
+image:
+  repository: falcosecurity/falco
+  tag: latest
+  pullPolicy: {{ .Values.imagePullPolicy }}
