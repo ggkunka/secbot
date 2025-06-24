@@ -1,0 +1,4 @@
+apiVersion: v2
+name: nessus
+description: "Vulnerability scanning with Tenable Nessus CLI"
+version: 1.0.0
