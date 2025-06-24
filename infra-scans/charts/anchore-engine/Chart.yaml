@@ -1,0 +1,4 @@
+apiVersion: v2
+name: anchore-engine
+description: "Vulnerability scanning with Anchore Engine (CLI + Engine components)"
+version: 0.8.2
