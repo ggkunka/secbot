@@ -1,0 +1,12 @@
+enabled: true
+image:
+  repository: mcr.microsoft.com/mde/linux
+  tag: latest
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
+# MDE config
+mde:
+  tenantId: "${MDE_TENANT_ID}"
+  workloadId: "${MDE_WORKLOAD_ID}"
+
+schedule: "0 4 1 * *"  # used if run standalone via CronJob
