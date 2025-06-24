@@ -1,0 +1,4 @@
+apiVersion: v2
+name: invicti
+description: "Dynamic application security testing with Invicti DAST"
+version: 1.0.0
