@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mde-linux
+spec:
+  selector:
+    matchLabels:
+      app: mde-linux
+  template:
+    metadata:
+      labels:
+        app: mde-linux
+    spec:
+      serviceAccountName: mde-agent-sa
+      containers:
+        - name: mde-agent
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          securityContext:
+            privileged: true
+          env:
+            - name: MDE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mde-credentials
+                  key: tenantId
+            - name: MDE_WORKLOAD_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mde-credentials
+                  key: workloadId
+            {{- if .Values.global.proxy.enabled }}
+            - name: HTTP_PROXY
+              value: "{{ .Values.global.proxy.httpProxy }}"
+            - name: HTTPS_PROXY
+              value: "{{ .Values.global.proxy.httpsProxy }}"
+            - name: NO_PROXY
+              value: "{{ .Values.global.proxy.noProxy }}"
+            {{- end }}
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+            - name: dev
+              mountPath: /dev
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /
+        - name: dev
+          hostPath:
+            path: /dev
