@@ -1,0 +1,4 @@
+apiVersion: v2
+name: mde-linux
+description: "Microsoft Defender for Endpoint (MDE) agent for Linux"
+version: 1.0.0
