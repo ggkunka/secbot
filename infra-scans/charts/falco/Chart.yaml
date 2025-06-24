@@ -1,0 +1,4 @@
+apiVersion: v2
+name: falco
+description: "Runtime threat detection with Falco"
+version: 1.14.0
