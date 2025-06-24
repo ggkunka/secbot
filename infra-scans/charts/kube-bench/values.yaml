@@ -1,0 +1,6 @@
+enabled: true
+image:
+  repository: aquasec/kube-bench
+  tag: latest
+  pullPolicy: {{ .Values.imagePullPolicy }}
+schedule: "0 4 1 * *"
