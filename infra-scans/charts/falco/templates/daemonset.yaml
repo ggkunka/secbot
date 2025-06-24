@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: falco
+spec:
+  selector:
+    matchLabels:
+      app: falco
+  template:
+    metadata:
+      labels:
+        app: falco
+    spec:
+      serviceAccountName: falco-sa
+      containers:
+        - name: falco
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          securityContext:
+            privileged: true
+          args:
+            - --driver
+            - json
+            - --json-output
+          volumeMounts:
+            - name: dev
+              mountPath: /dev
+            - name: var-run
+              mountPath: /var/run
+          {{- if .Values.global.proxy.enabled }}
+          env:
+            - name: HTTP_PROXY    
+              value: "{{ .Values.global.proxy.httpProxy }}"
+            - name: HTTPS_PROXY   
+              value: "{{ .Values.global.proxy.httpsProxy }}"
+            - name: NO_PROXY      
+              value: "{{ .Values.global.proxy.noProxy }}"
+          {{- end }}
+      volumes:
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: var-run
+          hostPath:
+            path: /var/run
