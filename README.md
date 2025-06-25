@@ -71,4 +71,18 @@ infra-scans/
     ├── mde-linux-app.yaml
     ├── invicti-app.yaml
     └── pentest-app.yaml
+infra-flux-installer/
+├── Chart.yaml
+├── values.yaml
+├── templates/
+│   ├── flux-crds.yaml            # Optional CRD manifest (airgap-safe)
+│   ├── flux-install.yaml         # Deploys Flux controllers from OCI or Harbor
+│   ├── image-repository.yaml     # Flux ImageRepository per tool
+│   ├── image-policy.yaml         # Flux ImagePolicy per tool
+│   ├── image-update.yaml         # Flux ImageUpdateAutomation
+│   ├── git-repository.yaml       # Git source for HelmReleases
+│   ├── helmrelease-scan.yaml     # HelmRelease templates for scanner tools
+│   ├── proxy-secret.yaml         # Proxy ENV injection (optional)
+│   └── harbor-pullsecret.yaml    # Harbor credentials
+
 ```
