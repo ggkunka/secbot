@@ -1,5 +1,24 @@
 # secbot
 ```
++-----------------+       +----------------------+       +---------------------+
+| Public Registry |  -->  | Flux Image Automation |  -->  | Harbor (Private Reg)|
+| (DockerHub, GH) |       | (Reflector + Pusher) |       |                     |
++-----------------+       +----------------------+       +---------------------+
+                                                           |
+                                                           v
+                                +------------------------------+
+                                | Argo CD                      |
+                                | - Monitors infra-scans repo  |
+                                | - Deploys Helm charts        |
+                                +------------------------------+
+                                                           |
+                                                           v
+                          +----------------------------------------+
+                          | Kubernetes Cluster                     |
+                          | - Pods with images from Harbor         |
+                          | - Secrets for image pull               |
+                          +----------------------------------------+
+
 infra-scans/
 ├── README.md
 ├── .helmignore
