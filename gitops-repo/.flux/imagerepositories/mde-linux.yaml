@@ -4,7 +4,7 @@ metadata:
   name: mde-linux-upstream
   namespace: "{{ .Values.namespace }}"
 spec:
-  interval: 1h
+  interval: {{ .Values.flux.imageMirrorInterval }}
   image: mcr.microsoft.com/mde/linux:latest
   proxy:
     httpProxy:  "{{ .Values.proxy.http }}"
