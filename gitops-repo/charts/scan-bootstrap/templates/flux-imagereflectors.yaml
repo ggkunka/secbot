@@ -1,0 +1,22 @@
+{{- /*
+flux-imagereflectors.yaml
+Generates Flux ImageReflector CRDs to mirror upstream images into Harbor.
+*/ -}}
+{{- range $tool := .Values.tools }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1alpha1
+kind: ImageReflector
+metadata:
+  name: {{ $tool.name }}-mirror
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  interval: {{ .Values.flux.imageMirrorInterval }}
+  sourceRef:
+    kind: ImageRepository
+    name: {{ $tool.name }}-upstream
+  to:
+    image: "{{ .Values.registry.harborUrl }}/{{ $tool.name }}:latest"
+    credentials:
+      secretRef:
+        name: {{ .Values.registry.pullSecret }}
+{{- end }}
