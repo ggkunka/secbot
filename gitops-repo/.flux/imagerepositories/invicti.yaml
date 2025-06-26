@@ -4,7 +4,7 @@ metadata:
   name: invicti-upstream
   namespace: "{{ .Values.namespace }}"
 spec:
-  interval: 1h
+  interval: {{ .Values.flux.imageMirrorInterval }}
   image: docker.io/your-org/invicti-scanner:latest
   proxy:
     httpProxy:  "{{ .Values.proxy.http }}"
