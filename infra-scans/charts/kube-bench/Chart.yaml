@@ -1,4 +1,0 @@
-apiVersion: v2
-name: kube-bench
-description: "Run CIS Kubernetes Benchmark"
-version: 0.6.5
