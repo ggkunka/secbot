@@ -4,7 +4,7 @@ metadata:
   name: nessus-upstream
   namespace: "{{ .Values.namespace }}"
 spec:
-  interval: 1h
+  interval: {{ .Values.flux.imageMirrorInterval }}
   image: docker.io/tenable/nessus:latest
   proxy:
     httpProxy:  "{{ .Values.proxy.http }}"
