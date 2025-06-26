@@ -32,16 +32,16 @@ scanBootstrap:
 # The 8 tools: where to pull upstream, what to mirror, and what args to run
 tools:
   - name: kube-bench
+    enabled: true
     upstreamImage: "quay.io/aquasecurity/kube-bench:latest"
-    mirrorImage:   "harbor.example.com/tenant/kube-bench:latest"
     args:
       - "--json"
       - "--output"
       - "/reports/kube-bench-{{workflow.creationTimestamp}}.json"
 
   - name: falco
+    enabled: false
     upstreamImage: "quay.io/falcosecurity/falco:latest"
-    mirrorImage:   "harbor.example.com/tenant/falco:latest"
     args:
       - "--driver"
       - "json"
@@ -49,8 +49,8 @@ tools:
       - "/reports/falco-{{workflow.creationTimestamp}}.json"
 
   - name: anchore-cli
+    enabled: true
     upstreamImage: "ghcr.io/anchore/cli:latest"
-    mirrorImage:   "harbor.example.com/tenant/anchore-cli:latest"
     args:
       - "/bin/sh"
       - "-c"
@@ -61,8 +61,8 @@ tools:
           > /reports/anchore-{{workflow.creationTimestamp}}.json
 
   - name: nessus
+    enabled: false
     upstreamImage: "docker.io/tenable/nessus:latest"
-    mirrorImage:   "harbor.example.com/tenant/nessus:latest"
     args:
       - "/bin/sh"
       - "-c"
@@ -72,8 +72,8 @@ tools:
           --format html --output /reports/nessus-{{workflow.creationTimestamp}}.html
 
   - name: mde-linux
+    enabled: false
     upstreamImage: "mcr.microsoft.com/mde/linux:latest"
-    mirrorImage:   "harbor.example.com/tenant/mde-linux:latest"
     args:
       - "/bin/sh"
       - "-c"
@@ -82,8 +82,8 @@ tools:
           --output /reports/mde-{{workflow.creationTimestamp}}.json
 
   - name: invicti
+    enabled: false
     upstreamImage: "docker.io/your-org/invicti-scanner:latest"
-    mirrorImage:   "harbor.example.com/tenant/invicti-scanner:latest"
     args:
       - "/bin/sh"
       - "-c"
@@ -92,8 +92,8 @@ tools:
           --format json --output /reports/invicti-{{workflow.creationTimestamp}}.json
 
   - name: nmap
+    enabled: false
     upstreamImage: "ghcr.io/instrumentisto/nmap:latest"
-    mirrorImage:   "harbor.example.com/tenant/nmap:latest"
     args:
       - "-sV"
       - "app-service.security-scans.svc.cluster.local"
@@ -101,8 +101,8 @@ tools:
       - "/reports/nmap-{{workflow.creationTimestamp}}.txt"
 
   - name: t50
+    enabled: false
     upstreamImage: "docker.io/corfr/t50:latest"
-    mirrorImage:   "harbor.example.com/tenant/t50:latest"
     args:
       - "--flood"
       - "--destport"
