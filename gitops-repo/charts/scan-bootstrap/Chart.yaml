@@ -1,0 +1,5 @@
+apiVersion: v2
+name: scan-bootstrap
+description: Umbrella chart to bootstrap Flux image mirroring and schedule monthly security scans via Argo Workflows
+version: 0.1.0
+appVersion: "1.0"
