@@ -4,7 +4,7 @@ metadata:
   name: anchore-cli-upstream
   namespace: "{{ .Values.namespace }}"
 spec:
-  interval: 1h
+  interval: {{ .Values.flux.imageMirrorInterval }}
   image: ghcr.io/anchore/cli:latest
   proxy:
     httpProxy:  "{{ .Values.proxy.http }}"
