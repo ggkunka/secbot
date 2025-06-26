@@ -1,0 +1,112 @@
+# Global proxy settings
+proxy:
+  enabled: false
+  http:  "http://10.0.0.1:3128"
+  https: "http://10.0.0.1:3128"
+  noProxy: "localhost,127.0.0.1,.svc.cluster.local"
+
+# Your Harbor or OCI-based Helm repo for scan-bootstrap chart
+helmRepo:
+  url: "oci://harbor.example.com/tenant/helm-charts"
+
+# Registry target for mirrored images
+registry:
+  harborUrl:  "harbor.example.com/tenant"
+  pullSecret: "harbor-creds"
+
+# Flux controller settings
+flux:
+  namespace:           "flux-system"
+  imageMirrorInterval: "1h"
+  releaseInterval:     "5m"
+
+# CronWorkflow schedule
+scan:
+  schedule:  "0 4 1 * *"        # 4 AM on the 1st of each month
+  timezone:  "Asia/Kolkata"
+
+# Version of this very chart in your Helm repo
+scanBootstrap:
+  version: "0.1.0"
+
+# The 8 tools: where to pull upstream, what to mirror, and what args to run
+tools:
+  - name: kube-bench
+    upstreamImage: "quay.io/aquasecurity/kube-bench:latest"
+    mirrorImage:   "harbor.example.com/tenant/kube-bench:latest"
+    args:
+      - "--json"
+      - "--output"
+      - "/reports/kube-bench-{{workflow.creationTimestamp}}.json"
+
+  - name: falco
+    upstreamImage: "quay.io/falcosecurity/falco:latest"
+    mirrorImage:   "harbor.example.com/tenant/falco:latest"
+    args:
+      - "--driver"
+      - "json"
+      - "--json-output"
+      - "/reports/falco-{{workflow.creationTimestamp}}.json"
+
+  - name: anchore-cli
+    upstreamImage: "ghcr.io/anchore/cli:latest"
+    mirrorImage:   "harbor.example.com/tenant/anchore-cli:latest"
+    args:
+      - "/bin/sh"
+      - "-c"
+      - >-
+        anchore-cli --u $ANCH_USER --p $ANCH_PASS image add my-registry/app:latest &&
+        anchore-cli image wait my-registry/app:latest &&
+        anchore-cli image vuln my-registry/app:latest all \
+          > /reports/anchore-{{workflow.creationTimestamp}}.json
+
+  - name: nessus
+    upstreamImage: "docker.io/tenable/nessus:latest"
+    mirrorImage:   "harbor.example.com/tenant/nessus:latest"
+    args:
+      - "/bin/sh"
+      - "-c"
+      - >-
+        nessuscli --host $NESSUS_HOST --username $NESSUS_USER --password $NESSUS_PASS \
+          --scan-policy 'K8s-Vuln' --target my-registry/app:latest \
+          --format html --output /reports/nessus-{{workflow.creationTimestamp}}.html
+
+  - name: mde-linux
+    upstreamImage: "mcr.microsoft.com/mde/linux:latest"
+    mirrorImage:   "harbor.example.com/tenant/mde-linux:latest"
+    args:
+      - "/bin/sh"
+      - "-c"
+      - >-
+        mde-agent --tenant $MDE_TENANT_ID --workload $MDE_WORKLOAD_ID \
+          --output /reports/mde-{{workflow.creationTimestamp}}.json
+
+  - name: invicti
+    upstreamImage: "docker.io/your-org/invicti-scanner:latest"
+    mirrorImage:   "harbor.example.com/tenant/invicti-scanner:latest"
+    args:
+      - "/bin/sh"
+      - "-c"
+      - >-
+        invicti-cli scan --target https://app.example.com \
+          --format json --output /reports/invicti-{{workflow.creationTimestamp}}.json
+
+  - name: nmap
+    upstreamImage: "ghcr.io/instrumentisto/nmap:latest"
+    mirrorImage:   "harbor.example.com/tenant/nmap:latest"
+    args:
+      - "-sV"
+      - "app-service.security-scans.svc.cluster.local"
+      - ">"
+      - "/reports/nmap-{{workflow.creationTimestamp}}.txt"
+
+  - name: t50
+    upstreamImage: "docker.io/corfr/t50:latest"
+    mirrorImage:   "harbor.example.com/tenant/t50:latest"
+    args:
+      - "--flood"
+      - "--destport"
+      - "80"
+      - "app-service.security-scans.svc.cluster.local"
+      - ">"
+      - "/reports/t50-{{workflow.creationTimestamp}}.txt"
