@@ -1,0 +1,27 @@
+{{- /*
+flux-imageupdateautomation.yaml
+Flux resource to bump mirrorImage tags in root values.yaml.
+*/ -}}
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: scan-values-automation
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: scan-charts-git
+  git:
+    checkout:
+      ref:
+        branch: {{ .Values.git.branch }}
+    commit:
+      author:
+        name: flux-bot
+        email: flux@localhost
+      messageTemplate: 'chore: bump scanner images'
+    push:
+      branch: {{ .Values.git.branch }}
+  update:
+    strategy: Setters
