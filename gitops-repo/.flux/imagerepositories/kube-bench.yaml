@@ -4,7 +4,7 @@ metadata:
   name: kube-bench-upstream
   namespace: "{{ .Values.namespace }}"
 spec:
-  interval: 1h
+  interval: {{ .Values.flux.imageMirrorInterval }}
   image: quay.io/aquasecurity/kube-bench:latest
   proxy:
     httpProxy:  "{{ .Values.proxy.http }}"
