@@ -1,0 +1,43 @@
+{{- /*
+flux-helmrelease.yaml
+Defines the HelmRelease resource that installs and keeps the scan-bootstrap chart up to date.
+*/ -}}
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: scan-bootstrap
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  interval: {{ .Values.flux.releaseInterval }}
+  chart:
+    spec:
+      chart: scan-bootstrap
+      version: "{{ .Values.scanBootstrap.version }}"
+      sourceRef:
+        kind: HelmRepository
+        name: scan-bootstrap-repo
+        namespace: {{ .Values.flux.namespace }}
+  values:
+    proxy:
+      enabled: {{ .Values.proxy.enabled }}
+      http:    "{{ .Values.proxy.http }}"
+      https:   "{{ .Values.proxy.https }}"
+      noProxy: "{{ .Values.proxy.noProxy }}"
+    registry:
+      harborUrl:  "{{ .Values.registry.harborUrl }}"
+      pullSecret: "{{ .Values.registry.pullSecret }}"
+    flux:
+      namespace:           "{{ .Values.flux.namespace }}"
+      imageMirrorInterval: "{{ .Values.flux.imageMirrorInterval }}"
+      releaseInterval:     "{{ .Values.flux.releaseInterval }}"
+    scan:
+      schedule:  "{{ .Values.scan.schedule }}"
+      timezone:  "{{ .Values.scan.timezone }}"
+    tools:
+    {{- range .Values.tools }}
+      - name:         "{{ .name }}"
+        upstreamImage: "{{ .upstreamImage }}"
+        mirrorImage:   "{{ .mirrorImage }}"
+        args:
+        {{ toYaml .args | indent 10 }}
+    {{- end }}
