@@ -37,7 +37,7 @@ spec:
     {{- range $tool := .Values.tools }}
     - name: {{ $tool.name }}-job
       container:
-        image: "{{ $.Values.registry.harborUrl }}/{{ $tool.name }}:{{ $tool.tag }}"
+        image: "{{ $.Values.registry.harborUrl }}/{{ $tool.name }}:latest"
         imagePullPolicy: Always
         args:
         {{ toYaml $tool.args | indent 10 }}
