@@ -1,0 +1,56 @@
+{{- /*
+Define the monthly scan DAG via Argo CronWorkflow
+*/ -}}
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: monthly-security-scans
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  schedule: "{{ .Values.scan.schedule }}"
+  timezone: "{{ .Values.scan.timezone }}"
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  workflowSpec:
+    entrypoint: run-all-scans
+    ttlStrategy:
+      secondsAfterFinished: 3600
+    volumeClaimTemplates:
+      - metadata:
+          name: reports
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+
+    templates:
+    - name: run-all-scans
+      dag:
+        {{- range $i, $tool := .Values.tools }}
+        - name: {{ $tool.name }}
+          {{- if gt $i 0 }}dependencies: [{{ (index $.Values.tools (sub $i 1)).name }}]{{ end }}
+          template: {{ $tool.name }}-job
+        {{- end }}
+
+    {{- range $tool := .Values.tools }}
+    - name: {{ $tool.name }}-job
+      container:
+        image: "{{ $tool.mirrorImage }}"
+        imagePullPolicy: Always
+        args:
+        {{ toYaml $tool.args | indent 10 }}
+        {{- if $.Values.proxy.enabled }}
+        env:
+        - name: HTTP_PROXY
+          value: "{{ $.Values.proxy.http }}"
+        - name: HTTPS_PROXY
+          value: "{{ $.Values.proxy.https }}"
+        - name: NO_PROXY
+          value: "{{ $.Values.proxy.noProxy }}"
+        {{- end }}
+        volumeMounts:
+        - name: reports
+          mountPath: /reports
+    {{- end }}
