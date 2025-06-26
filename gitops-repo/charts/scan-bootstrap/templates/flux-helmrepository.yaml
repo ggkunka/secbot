@@ -1,0 +1,14 @@
+{{- /*
+flux-helmrepository.yaml
+Defines the HelmRepository resource for the scan-bootstrap chart.
+*/ -}}
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: scan-bootstrap-repo
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  interval: 1m
+  url: "{{ .Values.helmRepo.url }}"
+  # If using OCI registry:
+  # type: oci
