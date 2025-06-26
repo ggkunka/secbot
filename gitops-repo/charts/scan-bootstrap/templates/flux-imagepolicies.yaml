@@ -1,0 +1,18 @@
+{{- /*
+flux-imagepolicies.yaml
+Generates Flux ImagePolicy CRDs to select latest tags.
+*/ -}}
+{{- range $tool := .Values.tools }}
+---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ $tool.name }}-policy
+  namespace: {{ .Values.flux.namespace }}
+spec:
+  imageRepositoryRef:
+    name: {{ $tool.name }}-upstream
+  policy:
+    semver:
+      range: ">=0.0.0"
+{{- end }}
