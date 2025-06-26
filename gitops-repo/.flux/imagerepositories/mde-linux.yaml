@@ -1,0 +1,12 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageRepository
+metadata:
+  name: mde-linux-upstream
+  namespace: "{{ .Values.namespace }}"
+spec:
+  interval: 1h
+  image: mcr.microsoft.com/mde/linux:latest
+  proxy:
+    httpProxy:  "{{ .Values.proxy.http }}"
+    httpsProxy: "{{ .Values.proxy.https }}"
+    noProxy:    "{{ .Values.proxy.noProxy }}"
